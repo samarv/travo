@@ -1,10 +1,9 @@
 from django.http import HttpResponse
 import os
-import slack as sl
+import slack
 import asyncio
 
-client = sl.WebClient(
-    token='xoxp-711954789234-717019077457-770822092487-4717d514e7ab0a08f1f140ff302aa9f2')
+client = slack.WebClient(token=os.environ['SLACK_API_TOKEN'])
 
 
 def index(request):
@@ -18,9 +17,10 @@ def send_async_message(channel='#bots', text='Hello world from async'):
         text=text
     )
     assert response["ok"]
-    assert response["message"]["text"] == "Hello world from async"
+    assert response["message"]["text"] == text
 
 
 def command(request):
+    print("boo")
     send_async_message()
     return HttpResponse(status=200)
