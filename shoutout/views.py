@@ -1,6 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from rest_framework.parsers import FormParser
+
+from rest_framework.parsers import FormParser, JSONParser
+
+from .models import organization, user, shoutout
+from .serializers import OrganizationSerializer, UserSerializer, ShoutoutSerializer
+from rest_framework import generics
+
 import json
 import os
 import slack
@@ -16,8 +22,20 @@ def index(request):
     # verify the code and get access tokens!
     response = client.oauth_access(client_id="711954789234.757475024355",
                                    client_secret="530630e9e46ad76fee5b3ef0e9baf43d", code=code)
-    print("index", response)
-    return HttpResponse("Hello, world!")
+    data = {
+        "name": response["team_name"],
+        "slack_org_id": response["team_id"],
+        "channel_name": response["incoming_webhook"]["channel"],
+        "channel_id": response["incoming_webhook"]["channel_id"],
+        "access_token": response["access_token"],
+        "bot_access_token": response["bot"]["bot_access_token"],
+    }
+    serializer = OrganizationSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=201)
+    else:
+        return JsonResponse(serializer.errors, status=400)
 
 
 def login(request):
@@ -45,7 +63,7 @@ def send_dialog_open(trigger_id, channel_id='CMQ777QG6'):
         "elements": [
             {
                 "label": "Shoutout to",
-                "name": "name",
+                "name": "user",
                 "type": "select",
                 "data_source": "users"
             },
@@ -75,5 +93,43 @@ def command(request):
 
 def interactive(request):
     data = FormParser().parse(request)
-    print("interactive", data)
+    # payload = data.get("payload")
+    data = data.dict()
+    pl = json.loads(data["payload"])
+    print(pl)
+    sender_id = pl["user"]["id"]
+    receiver_id = pl["submission"]["user"]
+    shoutout_text = pl["submission"]["shoutout"]
+    text = sender_id + " gave a shout out to " + receiver_id + " - " + shoutout_text
+    send_async_message(text=text)
     return HttpResponse(status=200)
+
+
+class OrganizationList(generics.ListCreateAPIView):
+    queryset = organization.objects.all()
+    serializer_class = OrganizationSerializer
+
+
+class OrganizationtDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = organization.objects.all()
+    serializer_class = OrganizationSerializer
+
+
+class UserList(generics.ListCreateAPIView):
+    queryset = user.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = user.objects.all()
+    serializer_class = UserSerializer
+
+
+class ShoutoutList(generics.ListCreateAPIView):
+    queryset = shoutout.objects.all()
+    serializer_class = ShoutoutSerializer
+
+
+class ShoutoutDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = shoutout.objects.all()
+    serializer_class = ShoutoutSerializer

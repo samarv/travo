@@ -42,6 +42,7 @@ ALLOWED_HOSTS = ["*", "travoslack.herokuapp.com", "127.0.0.1", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'shoutout.apps.ShoutoutConfig',
     'django.contrib.admin',
     'django.contrib.auth',
