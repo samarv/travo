@@ -18,7 +18,7 @@ from django.urls import include, path
 from django.conf.urls import url
 
 urlpatterns = [
-    path('slack/', include('shoutout.urls')),
+    path('v1/', include('shoutout.urls')),
     path('admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls'))
 ]

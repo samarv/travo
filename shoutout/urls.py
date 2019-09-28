@@ -6,16 +6,13 @@ from . import views
 from django.conf.urls import url, include
 
 urlpatterns = [
+    path('', views.index),
     path('org/', views.OrganizationList.as_view()),
     path('org/<int:pk>/', views.OrganizationtDetail.as_view()),
     path('user/', views.UserList.as_view()),
     path('user/<int:pk>/', views.UserDetail.as_view()),
     path('shoutout/', views.ShoutoutList.as_view()),
-    path('shoutout/<int:pk>/', views.ShoutoutDetail.as_view()),
-    path('', views.index, name='index'),
-    path('login', views.login, name='login'),
-    path('command', views.command, name='command'),
-    path('interactive', views.interactive, name='interactive')
+    path('shoutout/<int:pk>/', views.ShoutoutDetail.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
