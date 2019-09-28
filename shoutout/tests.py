@@ -12,7 +12,7 @@ class OrganizationTests(APITestCase):
         Ensure we can create a new account object.
         """
         # url = reverse('OrganizationList')
-        response = self.client.post('/slack/org/',
+        response = self.client.post('/v1/org/',
                                     {
                                         "name": "org3",
                                         "slack_org_id": "wwddwdd",
@@ -32,7 +32,7 @@ class UserTests(APITestCase):
         """
         Ensure we can create a new account object.
         """
-        self.client.post('/slack/org/',
+        self.client.post('/v1/org/',
                          {
                              "name": "org3",
                              "slack_org_id": "wwddwdd",
@@ -42,7 +42,7 @@ class UserTests(APITestCase):
                              "installation_date": "2019-09-23T11:49:49.858572Z",
                              "bot_access_token": "wdwdwwddw"
                          }, format='json')
-        url = '/slack/user/'
+        url = '/v1/user/'
         data = {
             "org_id": 1,
             "slack_mem_id": "123432",
@@ -50,7 +50,7 @@ class UserTests(APITestCase):
             "name": "samar",
             "avatar": "google.com"
         }
-        response = self.client.post('/slack/user/', data, format='json')
+        response = self.client.post('/v1/user/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(user.objects.count(), 1)
         self.assertEqual(user.objects.get().name, 'samar')
@@ -61,7 +61,7 @@ class ShoutoutTests(APITestCase):
         """
         Ensure we can create a new account object.
         """
-        self.client.post('/slack/org/',
+        self.client.post('/v1/org/',
                          {
                              "name": "org3",
                              "slack_org_id": "wwddwdd",
@@ -71,7 +71,7 @@ class ShoutoutTests(APITestCase):
                              "installation_date": "2019-09-23T11:49:49.858572Z",
                              "bot_access_token": "wdwdwwddw"
                          }, format='json')
-        url = '/slack/user/'
+        url = '/v1/user/'
         data = {
             "org_id": 1,
             "slack_mem_id": "123432",
@@ -79,7 +79,7 @@ class ShoutoutTests(APITestCase):
             "name": "samar",
             "avatar": "google.com"
         }
-        response = self.client.post('/slack/user/', data, format='json')
+        response = self.client.post('/v1/user/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(user.objects.count(), 1)
         self.assertEqual(user.objects.get().name, 'samar')
@@ -90,7 +90,7 @@ class ShoutoutTests(APITestCase):
             "name": "bob",
             "avatar": "google.com"
         }
-        response = self.client.post('/slack/user/', data, format='json')
+        response = self.client.post('/v1/user/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(user.objects.count(), 2)
         data = {
@@ -100,7 +100,7 @@ class ShoutoutTests(APITestCase):
             "timestamps": "2019-09-23T10:10:51.768501Z",
             "message_ts": "134554323413"
         }
-        response = self.client.post('/slack/shoutout/', data, format='json')
+        response = self.client.post('/v1/shoutout/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(shoutout.objects.count(), 1)
         self.assertEqual(shoutout.objects.get().message, 'good boi')
